@@ -1,8 +1,11 @@
 package testutil
 
 import (
+	"bytes"
 	"fmt"
 	"os"
+	"runtime"
+	"strconv"
 	"sync"
 	"testing"
 
@@ -68,16 +71,16 @@ func GetTestState() *TestState {
 // 	fmt.Println("Teardown shared state")
 // }
 
-// func GoID() int {
-// 	var buf [64]byte
-// 	n := runtime.Stack(buf[:], false)
-// 	idField := bytes.Fields(buf[:n])[1]
-// 	id, err := strconv.Atoi(string(idField))
-// 	if err != nil {
-// 		panic(fmt.Sprintf("cannot get goroutine id: %v", err))
-// 	}
-// 	return id
-// }
+func GoID() int {
+	var buf [64]byte
+	n := runtime.Stack(buf[:], false)
+	idField := bytes.Fields(buf[:n])[1]
+	id, err := strconv.Atoi(string(idField))
+	if err != nil {
+		panic(fmt.Sprintf("cannot get goroutine id: %v", err))
+	}
+	return id
+}
 
 // package testutil
 
@@ -115,25 +118,13 @@ func GetTestState() *TestState {
 // }
 
 func TestMain(m *testing.M) {
-	// Inicializa o estado compartilhado
 	_ = GetTestState()
 
-	// Coloque aqui suas configurações compartilhadas, como inicialização de banco de dados, variáveis de ambiente, etc.
-
-	fmt.Println("@@@@@@ TestMain testutil")
 	clear_elasticsearch_container := tests.NewESConnectionTests("infra")
+
+	code := m.Run()
 
 	clear_elasticsearch_container()
 
-	// Rodar os testes
-	code := m.Run()
-
-	// Teardown, se necessário
-	fmt.Println("Teardown shared state")
-
-	// Saída com o código de status dos testes
-	// Normalmente, não chamamos os.Exit aqui em código compartilhado,
-	// porque isso encerraria o processo de teste imediatamente.
-	// Os frameworks de teste fazem isso depois que TestMain retorna.
 	os.Exit(code)
 }
