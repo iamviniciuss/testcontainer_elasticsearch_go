@@ -4,17 +4,24 @@ import (
 	"testing"
 
 	use_cases "github.com/iamviniciuss/testcontainer_elasticsearch_go/src/application/use_cases"
-	"github.com/iamviniciuss/testcontainer_elasticsearch_go/src/domain"
 	setup_test "github.com/iamviniciuss/testcontainer_elasticsearch_go/tests"
+	"github.com/iamviniciuss/testcontainer_elasticsearch_go/tests/builders"
 
 	"github.com/stretchr/testify/assert"
 )
 
+func setupTestData(t *testing.T) {
+	document := builders.NewDocumentBuilder().
+		WithId("1").
+		WithName("Document 1").
+		Build()
+
+	err := setup_test.DocumentRepositoryGlobal.Create(document)
+	assert.NoError(t, err)
+}
+
 func TestMyUseCase_Execute(t *testing.T) {
-	err1 := setup_test.DocumentRepositoryGlobal.Create(domain.Document{
-		Id: "1",
-	})
-	assert.NoError(t, err1)
+	setupTestData(t)
 
 	useCase := use_cases.NewMyUseCase(setup_test.DocumentRepositoryGlobal)
 
@@ -23,4 +30,5 @@ func TestMyUseCase_Execute(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, result, 1)
 	assert.Equal(t, "1", result[0].Id)
+	assert.Equal(t, "Document 1", result[0].Name)
 }
