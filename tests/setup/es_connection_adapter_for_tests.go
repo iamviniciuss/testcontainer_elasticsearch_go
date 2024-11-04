@@ -1,4 +1,4 @@
-package tests
+package tests_setup
 
 import (
 	"context"
@@ -8,7 +8,6 @@ import (
 	"log"
 	"os"
 	"strings"
-	"time"
 
 	// "github.com/elastic/go-elasticsearch/esapi"
 	elasticsearch "github.com/elastic/go-elasticsearch/v8"
@@ -72,14 +71,14 @@ func NewESConnectionTests(nameOfSuite string) func() {
 						func(ctx context.Context, container testcontainers.Container) error {
 							fmt.Println("PostStarts testcontainer for elasticsearch")
 
-							fn := func() {
-								waitingForStop := time.Second * 60
-								time.Sleep(waitingForStop)
-								elasticsearchContainer.Stop(ctx, &waitingForStop)
-								fmt.Println("****** Stop Container")
-							}
+							// fn := func() {
+							// 	waitingForStop := time.Second * 60
+							// 	time.Sleep(waitingForStop)
+							// 	elasticsearchContainer.Stop(ctx, &waitingForStop)
+							// 	fmt.Println("****** Stop Container")
+							// }
 
-							go fn()
+							// go fn()
 
 							return nil
 						},
@@ -87,11 +86,10 @@ func NewESConnectionTests(nameOfSuite string) func() {
 				},
 			},
 			Env: map[string]string{
-				"ES_JAVA_OPTS":                 "-Xms1g -Xmx1g",
-				"discovery.type":               "single-node",
-				"node.name":                    CONTAINER_NAME,
-				"cluster.name":                 CONTAINER_NAME,
-				"TESTCONTAINERS_RYUK_DISABLED": "true",
+				"ES_JAVA_OPTS":   "-Xms1g -Xmx1g",
+				"discovery.type": "single-node",
+				"node.name":      CONTAINER_NAME,
+				"cluster.name":   CONTAINER_NAME,
 			},
 			SkipReaper: true,
 		},
@@ -156,6 +154,7 @@ func NewESConnectionTests(nameOfSuite string) func() {
 
 	return func(cont *elasticsearchTestContainer.ElasticsearchContainer) func() {
 		return func() {
+			log.Println("AFTER ALL TESTS: TearDown")
 			deleteAllIndices(esClient)
 		}
 	}(elasticsearchContainer)

@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/iamviniciuss/testcontainer_elasticsearch_go/src/infra/elasticsearch"
-	"github.com/iamviniciuss/testcontainer_elasticsearch_go/tests"
+	setup "github.com/iamviniciuss/testcontainer_elasticsearch_go/tests/setup"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -23,8 +23,8 @@ func TestDocumentRepositoryESSuite(t *testing.T) {
 	})
 }
 
-func (suite *DocumentRepositoryESSuite) Test_Create_A_NPS_Campaign() {
-	tests.CreateIndex(suite.ESConnection.Client())
+func (suite *DocumentRepositoryESSuite) Test_List_Zero_Documents() {
+	setup.CreateIndex(suite.ESConnection.Client())
 
 	documentRepositoryES := NewDocumentRepositoryES(suite.ESConnection)
 	documents, err := documentRepositoryES.List()
@@ -33,9 +33,9 @@ func (suite *DocumentRepositoryESSuite) Test_Create_A_NPS_Campaign() {
 	suite.Len(documents, 0)
 }
 
-func (suite *DocumentRepositoryESSuite) Test_Create_A_NPS_Campaign2() {
-	tests.CreateIndex(suite.ESConnection.Client())
-	tests.IndexDocuments(suite.ESConnection.Client())
+func (suite *DocumentRepositoryESSuite) Test_List_All_Documents() {
+	setup.CreateIndex(suite.ESConnection.Client())
+	setup.IndexDocuments(suite.ESConnection.Client())
 
 	documentRepositoryES := NewDocumentRepositoryES(suite.ESConnection)
 	documents, err := documentRepositoryES.List()

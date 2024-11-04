@@ -1,5 +1,6 @@
 package domain
 
 type DocumentRepository interface {
-	List() (*Document, error)
+	List() ([]Document, error)
+	Create(doc Document) error
 }

@@ -56,3 +56,29 @@ func (cr *DocumentRepositoryES) List() ([]domain.Document, error) {
 
 	return list, nil
 }
+
+func (cr *DocumentRepositoryES) Create(doc domain.Document) error {
+	data, err := json.Marshal(doc)
+	if err != nil {
+		return err
+	}
+
+	res, err := cr.esConnection.Client().Index(
+		"documents",
+		strings.NewReader(string(data)),
+		cr.esConnection.Client().Index.WithContext(context.Background()),
+		cr.esConnection.Client().Index.WithDocumentID(doc.Id),
+		cr.esConnection.Client().Index.WithRefresh("true"),
+	)
+
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return errors.New(res.String())
+	}
+
+	return nil
+}
