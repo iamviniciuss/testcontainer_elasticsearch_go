@@ -12,6 +12,10 @@ var (
 )
 
 func init() {
+	// setup.NewESConnectionTests("infra2")
+	// DocumentRepositoryGlobal = infra.NewDocumentRepositoryES(elasticsearch.NewESConnection())
+
+	// // defer teardown()
 	teardown := setup.NewESConnectionTests("infra2")
 	DocumentRepositoryGlobal = infra.NewDocumentRepositoryES(elasticsearch.NewESConnection())
 
