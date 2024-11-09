@@ -8,8 +8,8 @@ test:
 
 # Alvo para rodar todos os testes e gerar o relatório de cobertura
 coverage:
-	go test -coverprofile=coverage.out -coverpkg=$(TEST_DIR) $(INTEGRATION_TEST_DIR)
-	go tool cover -html=coverage.out -o coverage.html
+	go test -coverprofile=output_tests/coverage.out -coverpkg=$(TEST_DIR) $(INTEGRATION_TEST_DIR)
+	go tool cover -html=output_tests/coverage.out -o output_tests/coverage.html
 	open coverage.html
 
 # Alvo padrão
